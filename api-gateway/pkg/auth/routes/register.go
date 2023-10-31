@@ -13,7 +13,7 @@ type RegisterRequestBody struct {
 	Password string `json:"password"`
 }
 
-func Register(ctx *gin.Context, c pb.AuthServiceClient) {
+func Register(ctx *gin.Context, c pb.AuthServicesClient) {
 	body := RegisterRequestBody{}
 
 	if err := ctx.BindJSON(&body); err != nil {

@@ -6,10 +6,15 @@ import (
 	"net"
 	"order_svc/pkg/config"
 	"order_svc/pkg/db"
-	"order_svc/pkg/pb"
+	client "order_svc/pkg/infrastructure/product"
+	pb "order_svc/pkg/pb/order"
 	"order_svc/pkg/services"
 
 	"google.golang.org/grpc"
+)
+
+const (
+	PRODUCT_SERVICE_PORT = "localhost:8001"
 )
 
 func main() {
@@ -29,8 +34,10 @@ func main() {
 
 	fmt.Println("Order svc on: 8002")
 
+	productService := client.InitProductServiceClient(PRODUCT_SERVICE_PORT)
 	s := services.Server{
-		H: h,
+		H:               h,
+		ProductServices: productService,
 	}
 
 	grpcServer := grpc.NewServer()

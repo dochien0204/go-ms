@@ -2,7 +2,6 @@ package order
 
 import (
 	"Microservices/pkg/config"
-	"Microservices/pkg/middleware"
 	"Microservices/pkg/order/routes"
 
 	"github.com/gin-gonic/gin"
@@ -14,7 +13,7 @@ func RegisterRoutes(r *gin.Engine, c *config.Config) {
 	}
 
 	routes := r.Group("/order")
-	routes.POST("", middleware.JWTMiddleware(), svc.CreateOrder)
+	routes.POST("", svc.CreateOrder)
 
 }
 

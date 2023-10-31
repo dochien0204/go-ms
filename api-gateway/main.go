@@ -4,6 +4,7 @@ import (
 	"Microservices/pkg/auth"
 	"Microservices/pkg/config"
 	"Microservices/pkg/order"
+	productHandler "Microservices/pkg/product/handler"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -20,6 +21,7 @@ func main() {
 
 	auth.RegisterRoutes(r, &c)
 	order.RegisterRoutes(r, &c)
+	productHandler.RegisterRoutes(r, &c)
 
 	r.Run(c.Port)
 }

@@ -2,7 +2,6 @@ package routes
 
 import (
 	"Microservices/pkg/order/pb"
-	"Microservices/pkg/util"
 	"context"
 	"net/http"
 
@@ -10,17 +9,13 @@ import (
 )
 
 type CreateOrderRequestBody struct {
-	ProductId int64 `json:"productId"`
-	Quantity  int64 `json:"quantity"`
+	ProductId     int64  `json:"productId"`
+	Quantity      int64  `json:"quantity"`
+	OpaqueueToken string `json:"jwtToken"`
 }
 
 func CreateOrder(ctx *gin.Context, c pb.OrderServiceClient) {
 	body := CreateOrderRequestBody{}
-
-	token, err := util.GetToken(ctx)
-	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, "Unauthorized")
-	}
 
 	if err := ctx.BindJSON(&body); err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
@@ -30,7 +25,7 @@ func CreateOrder(ctx *gin.Context, c pb.OrderServiceClient) {
 	res, err := c.CreateOrder(context.Background(), &pb.CreateOrderRequest{
 		ProductId: body.ProductId,
 		Quantity:  body.Quantity,
-		Token:     token,
+		JwtToken:  body.OpaqueueToken,
 	})
 
 	if err != nil {

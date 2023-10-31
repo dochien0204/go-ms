@@ -9,10 +9,10 @@ import (
 )
 
 type ServiceClient struct {
-	Client pb.AuthServiceClient
+	Client pb.AuthServicesClient
 }
 
-func InitServiceClient(c *config.Config) pb.AuthServiceClient {
+func InitServiceClient(c *config.Config) pb.AuthServicesClient {
 
 	client, err := grpc.Dial(c.AuthSvcUrl, grpc.WithInsecure())
 
@@ -21,5 +21,5 @@ func InitServiceClient(c *config.Config) pb.AuthServiceClient {
 		fmt.Println("Cannot connect:", err)
 	}
 
-	return pb.NewAuthServiceClient(client)
+	return pb.NewAuthServicesClient(client)
 }

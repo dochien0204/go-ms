@@ -2,25 +2,43 @@ package services
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"order_svc/pkg/db"
+	client "order_svc/pkg/infrastructure/product"
 	"order_svc/pkg/models"
-	"order_svc/pkg/pb"
+	pb "order_svc/pkg/pb/order"
+	"order_svc/pkg/util"
 )
 
 type Server struct {
-	H db.Handler
+	H               db.Handler
+	ProductServices client.ProductServicesClient
 }
 
 func (s *Server) CreateOrder(ctx context.Context, req *pb.CreateOrderRequest) (*pb.CreateOrderResponse, error) {
 
-	token := req.Token
-	fmt.Println(token)
+	product, err := s.ProductServices.FindOne(req.ProductId)
+
+	if err != nil {
+		return &pb.CreateOrderResponse{
+			Status: http.StatusBadRequest,
+			Error:  err.Error(),
+		}, nil
+	}
+
+	//Parse token
+	claims, err := util.ParseAccessToken(req.JwtToken)
+	if err != nil {
+		return &pb.CreateOrderResponse{
+			Status: http.StatusUnauthorized,
+			Error:  err.Error(),
+		}, nil
+	}
 
 	order := models.Order{
 		Quantity:  req.Quantity,
-		ProductId: req.ProductId,
+		ProductId: product.GetData().Id,
+		UserId:    claims.UserId,
 	}
 
 	s.H.DB.Create(&order)
